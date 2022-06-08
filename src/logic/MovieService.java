@@ -2,6 +2,7 @@ package logic;
 
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
@@ -9,8 +10,10 @@ import java.util.regex.Pattern;
 
 import com.mongodb.MongoCredential;
 import com.mongodb.ServerAddress;
+import com.mongodb.client.model.Filters;
 import com.mongodb.client.model.Sorts;
 import org.bson.Document;
+import org.bson.conversions.Bson;
 import org.bson.types.ObjectId;
 
 import twitter4j.GeoLocation;
@@ -90,7 +93,8 @@ public class MovieService extends MovieServiceBase {
 	 */
 	public Document findMovieByTitle(String title) {
 		//TODO : implement
-		Document result = null;
+		Document result = movies.find(eq("title", title)).first();
+		//Document result = null;
 		return result;
 	}
 
@@ -112,7 +116,10 @@ public class MovieService extends MovieServiceBase {
 	 */
 	public FindIterable<Document> getBestMovies(int minVotes, double minRating, int limit) {
 		//TODO : implement
-		FindIterable<Document>  result = null;
+		Bson query1 = Filters.gt("votes", minVotes);
+		Bson query2 = Filters.gt("rating", minRating);
+		Bson query = Filters.and(query1, query2);
+		FindIterable<Document>  result = movies.find(query).limit(limit);
 		return result;
 	}
 
@@ -129,7 +136,8 @@ public class MovieService extends MovieServiceBase {
 	public FindIterable<Document> getByGenre(String genreList, int limit) {
 		List<String> genres = Arrays.asList(genreList.split(","));
 		//TODO : implement
-		FindIterable<Document>  result = null;
+		Bson query1 = Filters.all("genre", genres);
+		FindIterable<Document>  result = movies.find(query1).limit(limit);
 		return result;
 	}
 
@@ -147,8 +155,9 @@ public class MovieService extends MovieServiceBase {
 	 */
 	public FindIterable<Document> searchByPrefix(String titlePrefix, int limit) {
 		//TODO : implement
-		Document prefixQuery = null;
-		FindIterable<Document> result = null;
+
+		Bson query1 = Filters.eq("title", Pattern.compile("^" + titlePrefix + ".*"));
+		FindIterable<Document>  result = movies.find(query1).limit(limit);
 		return result;
 	}
 
