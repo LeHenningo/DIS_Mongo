@@ -46,9 +46,7 @@ public class MovieService extends MovieServiceBase {
 	private MongoCollection<Document> tweets;
 	private GridFSBucket fs;
 
-	String user = "root";     // the user name
-	String source;   // the source where the user is defined
-	char[] password = "password".toCharArray() ; // the password as a character array
+
 
 	/**
 	 * Create a new MovieService by connecting to MongoDB.
@@ -71,8 +69,8 @@ public class MovieService extends MovieServiceBase {
 		printCollections(db);
 
 		// TODO Take "movies" and "tweets" collection
-		MongoCollection<Document> movies = db.getCollection("movies");
-		MongoCollection<Document> tweets = db.getCollection("tweets");
+		movies = db.getCollection("movies");
+		tweets = db.getCollection("tweets");
 
 		// If database isn't filled (has less than 1000 documents) delete
 		// everything and fill it
