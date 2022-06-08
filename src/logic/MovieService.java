@@ -10,8 +10,7 @@ import java.util.regex.Pattern;
 
 import com.mongodb.MongoCredential;
 import com.mongodb.ServerAddress;
-import com.mongodb.client.model.Filters;
-import com.mongodb.client.model.Sorts;
+import com.mongodb.client.model.*;
 import org.bson.Document;
 import org.bson.conversions.Bson;
 import org.bson.types.ObjectId;
@@ -33,9 +32,6 @@ import com.mongodb.client.gridfs.GridFSBuckets;
 import com.mongodb.client.gridfs.model.GridFSFile;
 import com.mongodb.client.gridfs.model.GridFSUploadOptions;
 import static com.mongodb.client.model.Filters.*;
-
-import com.mongodb.client.model.Indexes;
-import com.mongodb.client.model.UpdateOptions;
 
 /**
  * This class holds the data/backend logic for the Movie Web-App. It uses
@@ -168,8 +164,9 @@ public class MovieService extends MovieServiceBase {
 	 * @return the FindIterable for the query
 	 */
 	public FindIterable getTweetedMovies() {
-		//TODO : implement
-		FindIterable<Document>  result = null;
+		//TODO 9 : AB HIER LORENZ DONE
+
+		FindIterable<Document>  result = movies.find(exists("tweets"));
 		return result;
 	}
 
@@ -183,9 +180,9 @@ public class MovieService extends MovieServiceBase {
 	 *            the comment to save
 	 */
 	public void saveMovieComment(String id, String comment) {
-		// TODO implement
-		Document query = null;
-		Document update = null;
+		// TODO implement DONE
+		Bson query = eq(id);
+		Bson update = Updates.set("comment",comment);
 		movies.updateOne(query, update);
 	}
 
