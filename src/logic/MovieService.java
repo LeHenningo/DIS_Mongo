@@ -212,8 +212,10 @@ public class MovieService extends MovieServiceBase {
 	 * @return the FindIterable for the query
 	 */
 	public FindIterable getByTweetsKeywordRegex(String keyword, int limit) {
-		//TODO : implement
-		FindIterable<Document>  result = null;
+
+		Pattern pattern = Pattern.compile(".*" + keyword + ".*");
+		Bson query = regex("title",pattern);
+		FindIterable<Document>  result = movies.find(query).limit(limit);
 		return result;
 	}
 
@@ -232,9 +234,10 @@ public class MovieService extends MovieServiceBase {
 	public FindIterable<Document> searchTweets(String query) {
 		// Create a text index on the "text" property of tweets
 		tweets.createIndex(new Document("text", "text").append("user.name", "text"));
-		
-		// TODO: implement
-		FindIterable<Document> result = null;
+		System.out.println("SearchTweets");
+
+		FindIterable<Document> result = tweets.find(Filters.text(query));
+
 		
 		return result;
 	}
@@ -248,8 +251,11 @@ public class MovieService extends MovieServiceBase {
 	 * @return the FindIterable for the query
 	 */
 	public FindIterable<Document>  getNewestTweets(int limit) {
-		//TODO : implement
-		FindIterable<Document>  result = null;
+
+		Bson sortIdDescending = Sorts.descending("id");
+
+		FindIterable<Document>  result = tweets.find().limit(limit).sort(sortIdDescending);
+
 		return result;
 	}
 
@@ -262,8 +268,8 @@ public class MovieService extends MovieServiceBase {
 	 * @return the FindIterable for the query
 	 */
 	public FindIterable<Document>  getGeotaggedTweets(int limit) {
-		//TODO : implement
-		FindIterable<Document>  result = null;
+		System.out.println("Geotag");
+		FindIterable<Document>  result = tweets.find(exists("coordinates")).limit(limit);
 		return result;
 	}
 
