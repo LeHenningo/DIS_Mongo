@@ -1,7 +1,6 @@
 package logic;
 
-import java.io.InputStream;
-import java.io.OutputStream;
+import java.io.*;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
@@ -10,7 +9,10 @@ import java.util.regex.Pattern;
 
 import com.mongodb.MongoCredential;
 import com.mongodb.ServerAddress;
+import com.mongodb.client.gridfs.GridFSFindIterable;
 import com.mongodb.client.model.*;
+import com.mongodb.gridfs.GridFS;
+import org.bson.BSON;
 import org.bson.Document;
 import org.bson.conversions.Bson;
 import org.bson.types.ObjectId;
@@ -286,8 +288,10 @@ public class MovieService extends MovieServiceBase {
 	 */
 	public void saveFile(String name, InputStream inputStream, String contentType) {
 		GridFSUploadOptions options = new GridFSUploadOptions().chunkSizeBytes(358400).metadata(new Document("contentType", contentType));
-		// TODO IMPLEMENT
-	    ObjectId fileId = null; 
+		// TODO IMPLEMENT DONE
+	    ObjectId fileId = fs.uploadFromStream(name, inputStream, options);
+		System.out.println("The file id of the uploaded file is: " + fileId.toHexString());
+
 	}
 
 	/**
@@ -299,11 +303,19 @@ public class MovieService extends MovieServiceBase {
 	 * @return The retrieved GridFS File
 	 */
 	public GridFSFile getFile(String name) {
-		// TODO: Implement
-		GridFSFile file = null;
+		// TODO: Implement DONE
+		GridFSFile file;
+
+		Bson query = Filters.eq("filename",name);
+		GridFSFindIterable iterable = fs.find(query);
+		file = iterable.first();
+
 		if (file == null) {
-			file = null;
+			fs.find(Filters.eq("filename","sample.png"));
 		}
+
+		file = iterable.first();
+		System.out.println("file id"+ file.getId());
 		return file;
 	}
 
